@@ -15,14 +15,15 @@ fi
 #
 
 # Beep on error in line editor.
-setopt BEEP
+#setopt BEEP
 
 #
 # Variables
 #
 
 # Treat these characters as part of a word.
-WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
+#WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
+WORDCHARS='*?_-.[]~/&;!#$%^(){}<>'
 
 # Use human-friendly identifiers.
 zmodload zsh/terminfo
@@ -190,6 +191,23 @@ function prepend-sudo {
 }
 zle -N prepend-sudo
 
+# Inserts 'man -k ' at the beginning of the line.
+function find-help {
+  if [[ "$BUFFER" != man\ * ]]; then
+    BUFFER="man -k $BUFFER"
+    (( CURSOR += 7 ))
+  fi
+}
+zle -N find-help
+
+# Clear screen buffers
+function clear-screen () {
+  zle -I
+  echo -ne '\033c'
+}
+zle -N clear-screen
+
+
 # Reset to default key bindings.
 bindkey -d
 
@@ -280,6 +298,10 @@ for keymap in 'emacs' 'viins'; do
   # Bind Shift + Tab to go to the previous menu item.
   bindkey -M "$keymap" "$key_info[BackTab]" reverse-menu-complete
 
+  # Up and Down in the history
+  bindkey -M "$keymap" "$key_info[PageUp]" history-beginning-search-backward
+  bindkey -M "$keymap" "$key_info[PageDown]" history-beginning-search-forward
+
   # Complete in the middle of word.
   bindkey -M "$keymap" "$key_info[Control]I" expand-or-complete
 
@@ -294,6 +316,22 @@ for keymap in 'emacs' 'viins'; do
 
   # Insert 'sudo ' at the beginning of the line.
   bindkey -M "$keymap" "$key_info[Control]X$key_info[Control]S" prepend-sudo
+
+  # Run root shell with sudo
+  bindkey -M "$keymap" -s "$key_info[Control]X$key_info[Control]A" "sudo -i\n"
+
+  # Easy access to manpages.
+  bindkey -M "$keymap" "$key_info[F1]" run-help
+
+  # Find more help.
+  bindkey -M "$keymap" "$key_info[F2]" find-help
+
+  # Run ps.
+  bindkey -M "$keymap" -s "$key_info[Control]X$key_info[Control]P" "ps x --forest -wwwA -o pid,user,cmd\n"
+
+  # Run netstat.
+  bindkey -M "$keymap" -s "$key_info[Control]X$key_info[Control]N" "netstat -ltupn\n"
+
 done
 
 # Do not expand .... to ../.. during incremental search.

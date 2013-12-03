@@ -17,8 +17,8 @@ fi
 # Editors
 #
 
-export EDITOR='nano'
-export VISUAL='nano'
+export EDITOR='vim'
+export VISUAL='less'
 export PAGER='less'
 
 #
@@ -33,9 +33,6 @@ fi
 # Paths
 #
 
-# Ensure path arrays do not contain duplicates.
-typeset -gU cdpath fpath mailpath path
-
 # Set the the list of directories that cd searches.
 # cdpath=(
 #   $cdpath
@@ -43,9 +40,16 @@ typeset -gU cdpath fpath mailpath path
 
 # Set the list of directories that Zsh searches for programs.
 path=(
-  /usr/local/{bin,sbin}
   $path
+  /sbin
+  /usr/sbin
+  /opt/sbin
+  /usr/local/{bin,sbin}
+  $HOME/.bin
 )
+
+# Ensure path arrays do not contain duplicates.
+typeset -gU cdpath fpath mailpath path
 
 #
 # Less

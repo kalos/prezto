@@ -17,3 +17,4 @@ fi
 # Manages .pac* files.
 alias pacc='pacman -C'
 
+alias pacU='sudo pacman --sync --refresh --sysupgrade --aur --devel'

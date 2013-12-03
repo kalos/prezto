@@ -19,8 +19,11 @@ setopt CDABLE_VARS          # Change directory to a path stored in a variable.
 setopt AUTO_NAME_DIRS       # Auto add variable-stored paths to ~ list.
 setopt MULTIOS              # Write to multiple descriptors.
 setopt EXTENDED_GLOB        # Use extended globbing syntax.
-unsetopt CLOBBER            # Do not overwrite existing files with > and >>.
-                            # Use >! and >>! to bypass.
+setopt CHASE_DOTS           # foo/bar/.. isn't foo/ even if bar is a symlink.
+setopt CHASE_LINKS          # cd to a symlink is in fact cd to the true dir.
+
+#unsetopt CLOBBER            # Do not overwrite existing files with > and >>.
+#                            # Use >! and >>! to bypass.
 
 #
 # Aliases
@@ -28,4 +31,11 @@ unsetopt CLOBBER            # Do not overwrite existing files with > and >>.
 
 alias d='dirs -v'
 for index ({1..9}) alias "$index"="cd +${index}"; unset index
+
+alias -- -="cd -"
+
+hash -d L=/usr/src/linux/
+hash -d VL=/var/log
+hash -d V=~/.vim/
+hash -d DOC=/home/kalos/doc
 

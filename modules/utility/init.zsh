@@ -43,6 +43,7 @@ alias rake='noglob rake'
 alias rsync='noglob rsync'
 alias scp='noglob scp'
 alias sftp='noglob sftp'
+alias git='noglob git'
 
 # Define general aliases.
 alias _='sudo'
@@ -90,9 +91,9 @@ else
 fi
 
 alias l='ls -1A'         # Lists in one column, hidden files.
-alias ll='ls -lh'        # Lists human readable sizes.
+alias ll='ls -lhA'       # Lists human readable sizes, hidden files.
+alias L='ls -lh'         # Lists human readable sizes.
 alias lr='ll -R'         # Lists human readable sizes, recursively.
-alias la='ll -A'         # Lists human readable sizes, hidden files.
 alias lm='la | "$PAGER"' # Lists human readable sizes, hidden files through pager.
 alias lx='ll -XB'        # Lists sorted by extension (GNU only).
 alias lk='ll -Sr'        # Lists sorted by size, largest last.
@@ -100,6 +101,18 @@ alias lt='ll -tr'        # Lists sorted by date, most recent last.
 alias lc='lt -c'         # Lists sorted by date, most recent last, shows change time.
 alias lu='lt -u'         # Lists sorted by date, most recent last, shows access time.
 alias sl='ls'            # I often screw this up.
+
+# Redirections & Pipes
+alias -g N="&>/dev/null"
+alias -g 1N="1>/dev/null"
+alias -g 2N="2>/dev/null"
+alias -g DN="/dev/null"
+alias -g Il="| less"
+alias -g Ill="2>&1 | less"
+alias -g G="| grep -i"
+alias -g S="| sort"
+alias -g C="| wc -l"
+
 
 # Mac OS X Everywhere
 if [[ "$OSTYPE" == darwin* ]]; then
@@ -138,6 +151,31 @@ else
 fi
 
 # Miscellaneous
+
+alias vi="vim"
+
+alias s='ssh'
+alias Ps='ssh -MNf'
+
+#ssh & scp without security checks
+alias ssh-noverify='ssh -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null"'
+alias scp-noverify='scp -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null"'
+
+alias iodrag='ionice -c3 nice -n19'
+
+alias netlisteners='lsof -i -P -n | grep LISTEN'
+
+alias d2u='sed "s/.$//"'
+alias u2d='sed "s/$/`echo r`/"'
+#alias clear="tput reset"
+alias clear="echo -ne '\033c'"
+alias rmvoid="rm -i *(.L0)"
+
+alias T="tail -f "
+alias xprop_name='xprop | grep --color=none "WM_WINDOW_ROLE\|WM_CLASS"'
+
+# quick&dirty mirror
+alias mirror="noglob wget --mirror --no-parent --recursive --timestamping --continue --recursive $1"
 
 # Serves a directory via HTTP.
 alias http-serve='python -m SimpleHTTPServer'
@@ -179,5 +217,74 @@ function find-exec {
 # Displays user owned processes status.
 function psu {
   ps -U "${1:-$USER}" -o 'pid,%cpu,%mem,command' "${(@)argv[2,-1]}"
+}
+
+function any() {
+        if [[ -z "$1" ]] ; then
+                echo "any - grep for process(es) by keyword" >&2
+                echo "Usage: any <keyword>" >&2 ; return 1
+        else
+                local STRING=$1
+                local LENGTH=$(expr length $STRING)
+                local FIRSCHAR=$(echo $(expr substr $STRING 1 1))
+                local REST=$(echo $(expr substr $STRING 2 $LENGTH))
+                ps xauwww| grep "[$FIRSCHAR]$REST"
+        fi
+}
+
+# Find all suid files in $PATH
+function findsuid()
+{               
+        sudo find / -type f \( -perm -4000 -o -perm -2000 \) -ls > ~/.suid/suidfiles.`date "+%Y-%m-%d"`.out 2>&1
+        sudo find / -type d \( -perm -4000 -o -perm -2000 \) -ls > ~/.suid/suiddirs.`date "+%Y-%m-%d"`.out 2>&1
+#        sudo find / -type f \( -perm -2 -o -perm -20 \) -ls > ~/.suid/writefiles.`date "+%Y-%m-%d"`.out 2>&1
+#        sudo find / -type d \( -perm -2 -o -perm -20 \) -ls > ~/.suid/writedirs.`date "+%Y-%m-%d"`.out 2>&1
+}
+
+# Recursively delete all .svn dirs
+function rm_svn() { 
+  find "$@" -name .svn -print0 | xargs -0 rm -rf
+}
+
+# provide useful information on globbing
+H-Glob() {
+echo -e "
+/      directories
+.      plain files
+@      symbolic links
+=      sockets
+p      named pipes (FIFOs)
+*      executable plain files (0100)
+%      device files (character or block special)
+%b     block special files
+%c     character special files
+r      owner-readable files (0400)
+w      owner-writable files (0200)
+x      owner-executable files (0100)
+A      group-readable files (0040)
+I      group-writable files (0020)
+E      group-executable files (0010)
+R      world-readable files (0004)
+W      world-writable files (0002)
+X      world-executable files (0001)
+s      setuid files (04000)
+S      setgid files (02000)
+t      files with the sticky bit (01000)
+print *(m-1)          # List files modified today.
+print *(a1)           # List files accessed one day ago.
+print *(@)            # Print links.
+print *(Lk+50)        # List files > 50 Kilobytes.
+print *(Lk-50)        # List files < 50 Kilobytes.
+print **/*.c          # Recursively list all c files.
+print **/*.c~file.c   # List all c files, except file.c
+print (foo|bar).*     # List files whos names start foo or bar.
+print *~*.*           # 
+chmod 644 *(.^x)      # make all non-executable files publically readable
+print -l *(.c|.h)     # List all c and header files on their own lines. 
+print **/*(g:users:)  # Recursively list files with the group 'users'
+echo /proc/*/cwd(:h:t:s/self//) # Analogue of >ps ax | awk '{print $1}'<
+
+noglob zmv -W ??\ * 0??\ *  # move 01 to 001, 02 to 002, etc
+"
 }
 

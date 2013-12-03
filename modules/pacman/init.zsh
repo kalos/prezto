@@ -54,6 +54,9 @@ alias pacq='pacman --sync --info'
 # Displays information about a package from the local database.
 alias pacQ='pacman --query --info'
 
+# Displays files of a package.
+alias pacl='pacman --query --list'
+
 # Searches for packages in the repositories.
 alias pacs='pacman --sync --search'
 
@@ -68,15 +71,16 @@ alias pacman-remove-orphans='sudo pacman --remove --recursive $(pacman --quiet -
 
 # Synchronizes the local package and Arch Build System databases against the
 # repositories.
-if (( $+commands[abs] )); then
-  alias pacu='sudo pacman --sync --refresh && sudo abs'
-else
-  alias pacu='sudo pacman --sync --refresh'
-fi
+#if (( $+commands[abs] )); then
+#  alias pacu='sudo pacman --sync --refresh && sudo abs'
+#else
+#  alias pacu='sudo pacman --sync --refresh'
+#fi
 
 # Synchronizes the local package database against the repositories then
 # upgrades outdated packages.
-alias pacU='sudo pacman --sync --refresh --sysupgrade'
+alias pacu='sudo pacman --sync --refresh --sysupgrade'
+alias pacU='sudo yaourt --sync --refresh --sysupgrade --aur --devel'
 
 unset _pacman_frontend
 
