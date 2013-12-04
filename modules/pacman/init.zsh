@@ -33,54 +33,48 @@ fi
 # Aliases
 #
 
-# Pacman.
-alias pac='pacman'
-
 # Installs packages from repositories.
-alias paci='sudo pacman --sync'
+alias Pi='sudo pacman --sync'
 
 # Installs packages from files.
-alias pacI='sudo pacman --upgrade'
+alias Pif='sudo pacman --upgrade'
 
-# Removes packages and unneeded dependencies.
-alias pacx='sudo pacman --remove'
+# Removes packages.
+alias Pr='sudo pacman --remove'
 
 # Removes packages, their configuration, and unneeded dependencies.
-alias pacX='sudo pacman --remove --nosave --recursive'
+alias PR='sudo pacman --remove --nosave --recursive'
 
-# Displays information about a package from the repositories.
-alias pacq='pacman --sync --info'
+# Synchronizes the local package database against the repositories then
+# upgrades outdated packages.
+alias Pu='sudo pacman --sync --refresh --sysupgrade'
 
-# Displays information about a package from the local database.
-alias pacQ='pacman --query --info'
+# Synchronizes the local package and Arch Build System databases against the
+# repositories then upgrades outdated packages.
+if (( $+commands[abs] )); then
+  alias Pu='sudo pacman --sync --refresh && sudo abs'
+fi
 
-# Displays files of a package.
-alias pacl='pacman --query --list'
-
-# Searches for packages in the repositories.
-alias pacs='pacman --sync --search'
+# Searches for packages.
+alias Ps='pacman --sync --search'
 
 # Searches for packages in the local database.
-alias pacS='pacman --query --search'
+alias Psl='pacman --query --search'
+
+# Displays information about a package from the repositories.
+alias Pinf='pacman --sync --info'
+
+# List files installed to your system from package.
+alias PL='pacman --query --list'
+
+# Cleans the cache.
+alias Pc='pacman -Scc --noconfirm'
 
 # Lists orphan packages.
 alias pacman-list-orphans='sudo pacman --query --deps --unrequired'
 
 # Removes orphan packages.
 alias pacman-remove-orphans='sudo pacman --remove --recursive $(pacman --quiet --query --deps --unrequired)'
-
-# Synchronizes the local package and Arch Build System databases against the
-# repositories.
-#if (( $+commands[abs] )); then
-#  alias pacu='sudo pacman --sync --refresh && sudo abs'
-#else
-#  alias pacu='sudo pacman --sync --refresh'
-#fi
-
-# Synchronizes the local package database against the repositories then
-# upgrades outdated packages.
-alias pacu='sudo pacman --sync --refresh --sysupgrade'
-alias pacU='sudo yaourt --sync --refresh --sysupgrade --aur --devel'
 
 unset _pacman_frontend
 
