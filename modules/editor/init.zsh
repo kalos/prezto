@@ -22,8 +22,8 @@ fi
 #
 
 # Treat these characters as part of a word.
-#WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
-WORDCHARS='*?_-.[]~/&;!#$%^(){}<>'
+WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
+#WORDCHARS='*?_-.[]~/&;!#$%^(){}<>'
 
 # Use human-friendly identifiers.
 zmodload zsh/terminfo
@@ -318,7 +318,7 @@ for keymap in 'emacs' 'viins'; do
   bindkey -M "$keymap" "$key_info[Control]X$key_info[Control]S" prepend-sudo
 
   # Run root shell with sudo
-  bindkey -M "$keymap" -s "$key_info[Control]X$key_info[Control]A" "sudo -i\n"
+  bindkey -M "$keymap" -s "$key_info[Control]X$key_info[Control]A" "\eqsudo -i\n"
 
   # Easy access to manpages.
   bindkey -M "$keymap" "$key_info[F1]" run-help
@@ -326,13 +326,26 @@ for keymap in 'emacs' 'viins'; do
   # Find more help.
   bindkey -M "$keymap" "$key_info[F2]" find-help
 
+  # more info about command/alias/etc
+  bindkey -M "$keymap" "$key_info[F3]" which-command
+
   # Run ps.
-  bindkey -M "$keymap" -s "$key_info[Control]X$key_info[Control]P" "ps x --forest -wwwA -o pid,user,cmd\n"
+  bindkey -M "$keymap" -s "$key_info[Control]X$key_info[Control]P" "\eqps x --forest -wwwA -o pid,user,cmd\n"
 
   # Run netstat.
-  bindkey -M "$keymap" -s "$key_info[Control]X$key_info[Control]N" "netstat -ltupn\n"
+  bindkey -M "$keymap" -s "$key_info[Control]X$key_info[Control]N" "\eqnetstat -ltupn\n"
 
 done
+
+#
+# Menuselect
+#
+
+#bindkey -M menuselect "/"  accept-and-infer-next-history
+#bindkey -M menuselect "^?" undo
+#bindkey -M menuselect " " accept-and-hold
+#bindkey -M menuselect "*" history-incremental-search-forward
+#bindkey -M menuselect "+" accept-and-menu-complete
 
 # Do not expand .... to ../.. during incremental search.
 if zstyle -t ':prezto:module:editor' dot-expansion; then
