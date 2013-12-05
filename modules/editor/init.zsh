@@ -337,16 +337,6 @@ for keymap in 'emacs' 'viins'; do
 
 done
 
-#
-# Menuselect
-#
-
-#bindkey -M menuselect "/"  accept-and-infer-next-history
-#bindkey -M menuselect "^?" undo
-#bindkey -M menuselect " " accept-and-hold
-#bindkey -M menuselect "*" history-incremental-search-forward
-#bindkey -M menuselect "+" accept-and-menu-complete
-
 # Do not expand .... to ../.. during incremental search.
 if zstyle -t ':prezto:module:editor' dot-expansion; then
   bindkey -M isearch . self-insert 2> /dev/null
@@ -367,4 +357,18 @@ else
 fi
 
 unset key{,map,bindings}
+
+#
+# Menuselect
+#
+
+# force load completion system
+# (auto-load overwrite your menuselect key bindings)
+zmodload -i zsh/complist
+
+bindkey -M menuselect "/"  accept-and-infer-next-history
+bindkey -M menuselect "^?" undo
+bindkey -M menuselect " " accept-and-hold
+bindkey -M menuselect "i" accept-and-menu-complete
+bindkey -M menuselect "*" history-incremental-search-forward
 
